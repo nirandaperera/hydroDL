@@ -134,8 +134,8 @@ def testModel(model, x, c, *, batchSize=None, filePathLst=None):
             zTest = torch.from_numpy(np.swapaxes(zTemp, 1, 0)).float()
             if torch.cuda.is_available():
                 zTest = zTest.cuda()
-        if type(model) in [rnn.CudnnLstmModel, rnn.CpuLstmModel]:
-            yP = model(xTest)
+        # if type(model) in [rnn.CudnnLstmModel, rnn.CpuLstmModel]:
+        yP = model(xTest)
         yOut = yP.detach().cpu().numpy().swapaxes(0, 1)
 
         # save output
