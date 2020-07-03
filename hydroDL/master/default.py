@@ -21,7 +21,8 @@ optLstm = OrderedDict(
     nx=len(optDataSMAP['varT']) + len(optDataSMAP['varC']),
     ny=1,
     hiddenSize=256,
-    doReLU=True)
+    doReLU=True,
+    dr=0.5,)
 
 optLossRMSE = OrderedDict(name='hydroDL.model.crit.RmseLoss', prior='gauss')
 

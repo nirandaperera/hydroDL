@@ -145,12 +145,15 @@ def train(mDict):
         model = hydroDL.model.rnn.CudnnLstmModel(
             nx=optModel['nx'],
             ny=optModel['ny'],
-            hiddenSize=optModel['hiddenSize'])
+            hiddenSize=optModel['hiddenSize'],
+            dr=optModel['dr'],
+        )
     elif eval(optModel['name']) is hydroDL.model.rnn.CpuLstmModel:
         model = hydroDL.model.rnn.CpuLstmModel(
             nx=optModel['nx'],
             ny=optModel['ny'],
-            hiddenSize=optModel['hiddenSize'])
+            hiddenSize=optModel['hiddenSize'],
+            dr=optModel['dr'],)
 
     # train
     if optTrain['saveEpoch'] > optTrain['nEpoch']:
