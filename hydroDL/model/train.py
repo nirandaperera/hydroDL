@@ -48,18 +48,16 @@ def trainModel(model,
         t0 = time.time()
         for iIter in range(0, nIterEp):
             # training iterations
-            if type(model) in [rnn.CudnnLstmModel, rnn.CpuLstmModel, torch.nn.Module]:
-                iGrid, iT = randomIndex(ngrid, nt, [batchSize, rho])
-                xTrain = selectSubset(x, iGrid, iT, rho, c=c)
-                yTrain = selectSubset(y, iGrid, iT, rho)
-                yP = model(xTrain)
-                loss = lossFun(yP, yTrain)
-                loss.backward()
-                optim.step()
-                model.zero_grad()
-                lossEp = lossEp + loss.item()
-            else:
-                raise Exception('unknown model')
+            iGrid, iT = randomIndex(ngrid, nt, [batchSize, rho])
+            xTrain = selectSubset(x, iGrid, iT, rho, c=c)
+            yTrain = selectSubset(y, iGrid, iT, rho)
+            yP = model(xTrain)
+            loss = lossFun(yP, yTrain)
+            loss.backward()
+            optim.step()
+            model.zero_grad()
+            lossEp = lossEp + loss.item()
+
         # print loss
         lossEp = lossEp / nIterEp
         logStr = 'Epoch {} Loss {:.3f} time {:.2f}'.format(
