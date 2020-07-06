@@ -65,9 +65,8 @@ def trainModel(model,
 
         # print loss
         lossEp = lossEp / points
-        logStr = 'Epoch {} Loss {:.3f} time {:.2f}'.format(
-            iEpoch, lossEp,
-            time.time() - t0)
+        logStr = 'Epoch {} Loss {:.3f} time {:.2f} points/epoch {}'.format(
+            iEpoch, lossEp, time.time() - t0, points)
         print(logStr)
         # save model and loss
         if saveFolder is not None:
