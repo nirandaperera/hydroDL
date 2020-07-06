@@ -38,6 +38,8 @@ def trainModel(model,
         lossFun = lossFun.cuda()
         model = model.cuda()
 
+    print("iterations", nIterEp)
+
     optim = torch.optim.Adadelta(model.parameters())
     model.zero_grad()
     if saveFolder is not None:
@@ -45,6 +47,7 @@ def trainModel(model,
         rf = open(runFile, 'a+')
     for iEpoch in range(1, nEpoch + 1):
         lossEp = 0
+        points = 0
         t0 = time.time()
         for iIter in range(0, nIterEp):
             # training iterations
@@ -56,10 +59,12 @@ def trainModel(model,
             loss.backward()
             optim.step()
             model.zero_grad()
-            lossEp = lossEp + loss.item()
+            # lossEp = lossEp + loss.item()
+            lossEp += loss.item() * yTrain.shape[0]
+            points += yTrain.shape[0]
 
         # print loss
-        lossEp = lossEp / nIterEp
+        lossEp = lossEp / points
         logStr = 'Epoch {} Loss {:.3f} time {:.2f}'.format(
             iEpoch, lossEp,
             time.time() - t0)
