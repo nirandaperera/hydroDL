@@ -60,13 +60,13 @@ def trainModel(model,
             optim.step()
             model.zero_grad()
             # lossEp = lossEp + loss.item()
-            lossEp += loss.item() * yTrain.shape[0]
-            points += yTrain.shape[0]
+            lossEp += loss.item() * yTrain.shape[0]*yTrain.shape[1]
+            points += yTrain.shape[0]*yTrain.shape[1]
 
         # print loss
-        lossEp = lossEp / points
-        logStr = 'Epoch {} Loss {:.3f} time {:.2f} points/epoch {}'.format(
-            iEpoch, lossEp, time.time() - t0, points)
+        # lossEp = lossEp / points
+        logStr = 'Epoch {} Loss {:.3f} {:.3f} time {:.2f} points/epoch {}'.format(
+            iEpoch, lossEp/ points, lossEp, time.time() - t0, points)
         print(logStr)
         # save model and loss
         if saveFolder is not None:
