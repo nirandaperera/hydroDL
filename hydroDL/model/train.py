@@ -76,6 +76,7 @@ def trainModel(model,
                 modelFile = os.path.join(saveFolder,
                                          'model_Ep' + str(iEpoch) + '.pt')
                 torch.save(model, modelFile)
+    print("xTrain shape", xTrain.shape, "ytrain shape", yTrain.shape)
     if saveFolder is not None:
         rf.close()
     return model
