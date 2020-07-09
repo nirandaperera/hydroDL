@@ -7,6 +7,7 @@ from matplotlib.patches import Rectangle
 import matplotlib.gridspec as gridspec
 from hydroDL import utils
 import string
+import random
 
 import os
 # manually add package
@@ -263,7 +264,9 @@ def plotTsMap(dataMap,
               figsize=[12, 6],
               isGrid=False,
               multiTS=False,
-              linewidth=1):
+              linewidth=1,
+              tsLon=None,
+              tsLat=None):
     if type(dataMap) is np.ndarray:
         dataMap = [dataMap]
     if type(dataTs) is np.ndarray:
@@ -306,56 +309,56 @@ def plotTsMap(dataMap,
             grid, uy, ux = utils.grid.array2grid(data, lat=lat, lon=lon)
             plotMap(grid, lat=uy, lon=ux, ax=ax, cRange=cRange, title=title)
 
-    # plot ts
-    def onclick(event):
-        xClick = event.xdata
-        yClick = event.ydata
-        d = np.sqrt((xClick - lon)**2 + (yClick - lat)**2)
-        ind = np.argmin(d)
-        titleStr = 'pixel %d, lat %.3f, lon %.3f' % (ind, lat[ind], lon[ind])
-        for ix in range(nAx):
-            tsLst = list()
-            for temp in dataTs[ix]:
-                tsLst.append(temp[ind, :])
-            axTsLst[ix].clear()
-            if ix == 0:
-                plotTS(
-                    t,
-                    tsLst,
-                    ax=axTsLst[ix],
-                    legLst=tsNameLst,
-                    title=titleStr,
-                    cLst=tsColor,
-                    linewidth=linewidth,
-                    tBar=tBar)
-            else:
-                plotTS(
-                    t,
-                    tsLst,
-                    ax=axTsLst[ix],
-                    legLst=tsNameLst,
-                    cLst=tsColor,
-                    linewidth=linewidth,
-                    tBar=tBar)
+    if not tsLon:
+        tsLon = lon[0]
+    if not tsLat:
+        tsLat = lat[0]
+    xClick = tsLon
+    yClick = tsLat
+    d = np.sqrt((xClick - lon)**2 + (yClick - lat)**2)
+    ind = np.argmin(d)
+    titleStr = 'pixel %d, lat %.3f, lon %.3f' % (ind, lat[ind], lon[ind])
+    for ix in range(nAx):
+        tsLst = list()
+        for temp in dataTs[ix]:
+            tsLst.append(temp[ind, :])
+        axTsLst[ix].clear()
+        if ix == 0:
+            plotTS(
+                t,
+                tsLst,
+                ax=axTsLst[ix],
+                legLst=tsNameLst,
+                title=titleStr,
+                cLst=tsColor,
+                linewidth=linewidth,
+                tBar=tBar)
+        else:
+            plotTS(
+                t,
+                tsLst,
+                ax=axTsLst[ix],
+                legLst=tsNameLst,
+                cLst=tsColor,
+                linewidth=linewidth,
+                tBar=tBar)
 
-            if dataTs2 is not None:
-                tsLst2 = list()
-                for temp in dataTs2[ix]:
-                    tsLst2.append(temp[ind, :])
-                axTs2Lst[ix].clear()
-                plotTS(
-                    t,
-                    tsLst2,
-                    ax=axTs2Lst[ix],
-                    legLst=tsNameLst2,
-                    cLst=tsColor2,
-                    lineWidth=linewidth,
-                    tBar=tBar)
-            if ix != nAx - 1:
-                axTsLst[ix].set_xticklabels([])
-        plt.draw()
-
-    fig.canvas.mpl_connect('button_press_event', onclick)
+        if dataTs2 is not None:
+            tsLst2 = list()
+            for temp in dataTs2[ix]:
+                tsLst2.append(temp[ind, :])
+            axTs2Lst[ix].clear()
+            plotTS(
+                t,
+                tsLst2,
+                ax=axTs2Lst[ix],
+                legLst=tsNameLst2,
+                cLst=tsColor2,
+                lineWidth=linewidth,
+                tBar=tBar)
+        if ix != nAx - 1:
+            axTsLst[ix].set_xticklabels([])
+    plt.draw()
     plt.tight_layout()
     plt.show()
 

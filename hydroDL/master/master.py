@@ -6,7 +6,7 @@ import json
 from hydroDL import utils
 import datetime as dt
 import pandas as pd
-
+import math
 
 def wrapMaster(out, optData, optModel, optLoss, optTrain):
     mDict = OrderedDict(
@@ -172,6 +172,23 @@ def train(mDict):
         saveEpoch=optTrain['saveEpoch'],
         saveFolder=out)
 
+def prepData(optData, readX=True, readY=True, TimeEncoding=True):
+    # data
+    df, xold, y, c = loadData(optData, readX=readX, readY=readY)
+    if TimeEncoding:
+      x = np.zeros((xold.shape[0],xold.shape[1],xold.shape[2]+2))
+      for i in range(0,xold.shape[0]):
+        Currentday = 90
+        for j in range(0,xold.shape[1]):
+          Currentday = (Currentday+1)%365
+          theta = float(Currentday)*2.0*math.pi/366.0
+          x[i,j,xold.shape[2]]  = math.cos(theta)
+          x[i,j,xold.shape[2]+1]  = math.sin(theta)
+          for k in range(0,xold.shape[2]):
+            x[i,j,k] = xold[i,j,k]
+    else:
+      x = xold
+    return df, x, y, c
 
 def test(out,
          *,
@@ -197,13 +214,13 @@ def test(out,
             reTest = True
     if reTest is True:
         print('Runing new results')
-        df, x, obs, c = loadData(optData)
+        df, x, obs, c = prepData(optData)
         model = loadModel(out, epoch=epoch)
         hydroDL.model.train.testModel(
             model, x, c, batchSize=batchSize, filePathLst=filePathLst)
     else:
         print('Loaded previous results')
-        df, x, obs, c = loadData(optData, readX=False)
+        df, x, obs, c = prepData(optData, readX=False)
 
     # load previous result
     mDict = readMasterFile(out)
